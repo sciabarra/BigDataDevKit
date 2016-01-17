@@ -3,6 +3,7 @@
 echo "ec2-user:CHANGEME" | chpasswd
 # end changes
 yum -y update && yum -y install docker git nginx
+service docker start
 /sbin/chkconfig nginx on
 /sbin/chkconfig docker on
 sed  -i -e 's/PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
@@ -41,6 +42,5 @@ docker run --name term -p "3000:3000" -u term -d \
 --sshhost $(hostname -I | awk '{ print $1}') \
 --sshuser ec2-user
 service nginx start
-service docker start
 service sshd restart
 # end script
