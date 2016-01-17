@@ -9,5 +9,5 @@ service sshd restart
 mkdir /etc/cert
 printf "\\n\\n\\n\\n\\n\\n\\n" | openssl req -x509 -newkey rsa:2048 -keyout /etc/cert/cert.key -out /etc/cert/cert.pem -days 30000 -nodes
 docker pull nathanleclaire/wetty
-docker run --name term --rm=true -p "1443:1443" -v /etc/cert:/etc/cert -u term -ti nathanleclaire/wetty app.js --port 1443 --sshhost $(hostname -I | awk '{ print $1}') --sshuser ec2-user --sslkey /etc/cert/cert.key --sslcert /etc/cert/cert.pem
+docker run --name term --rm=true -p "1443:1443" -v /etc/cert:/etc/cert -u term -d nathanleclaire/wetty app.js --port 1443 --sshhost $(hostname -I | awk '{ print $1}') --sshuser ec2-user --sslkey /etc/cert/cert.key --sslcert /etc/cert/cert.pem
 # end script
