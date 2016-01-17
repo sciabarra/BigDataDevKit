@@ -1,6 +1,6 @@
 #!/bin/bash
 # change password here
-echo "ec2-user:CHANGEME" | chpasswd
+echo "ec2-user:${PASSWORD:-changeMeRightNow}" | chpasswd
 # end changes
 yum -y update && yum -y install docker git nginx
 service docker start
