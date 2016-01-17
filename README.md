@@ -9,7 +9,10 @@ Launch an instance on Amazon WebServices
 
 Specify in the initialization of the vm
 
+```
+#!/bin/bash
 wget -O- http://bit.ly/1PjnNB3 | PASSWORD="changeme" bash
+```
 
 NOTE!
  - change the password (change the string within the quotes with your password) to the one you want
