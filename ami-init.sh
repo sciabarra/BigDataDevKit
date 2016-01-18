@@ -1,24 +1,29 @@
 #!/bin/bash
 # change password here
 echo "ec2-user:${PASSWORD:-changeMeRightNow}" | chpasswd
-# end changes
 yum -y update && yum -y install docker git nginx
-service docker start
 /sbin/chkconfig nginx on
 /sbin/chkconfig docker on
+service docker start
+service nginx stop
 sed  -i -e 's/PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-printf "\\n\\n\\n\\n\\n\\n\\n" | \
-openssl req -x509 -newkey rsa:2048 \
--keyout /etc/nginx/cert.key \
--out /etc/nginx/cert.pem -days 30000 -nodes
+# assign duckdns hostname
+echo "curl -O/dev/null http://www.duckdns.org/update?domains=${HOST:?duckdns hostname}&token=${TOKEN:?duckdns toker}&ip=" >>/etc/rc.d/rc.local
+bash /etc/rc.d/rc.local
+docker run --rm -p 80:80 -p 443:443 \
+    --name letsencrypt \
+    -v /etc/letsencrypt:/etc/letsencrypt \
+    -e "LETSENCRYPT_EMAIL=${EMAIL:?email}" \
+    -e "LETSENCRYPT_DOMAIN1=${HOST}.duckdns.org" \
+    blacklabelops/letsencrypt install
 cat <<EOF >/etc/nginx/conf.d/wetty.conf
 server {
    listen       443;
    server_name  localhost;
    root         html;
-    ssl                  on;
-    ssl_certificate      cert.pem;
-    ssl_certificate_key  cert.key;
+    ssl         on;
+    ssl_certificate      /etc/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem;
+    ssl_certificate_key  /etc/letsencrypt/live/${HOST}.duckdns.org/privkey.pem;
     ssl_session_timeout  5m;
     ssl_protocols  SSLv2 SSLv3 TLSv1;
     ssl_ciphers  HIGH:!aNULL:!MD5;
@@ -43,4 +48,3 @@ docker run --name term -p "3000:3000" -u term -d \
 --sshuser ec2-user
 service nginx start
 service sshd restart
-# end script
