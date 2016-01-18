@@ -8,10 +8,9 @@ service docker start
 service nginx stop
 sed  -i -e 's/PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 # assign duckdns hostname
-echo "curl -O/dev/null http://www.duckdns.org/update?domains=${HOST:?duckdns hostname}&token=${TOKEN:?duckdns toker}&ip=" >>/etc/rc.d/rc.local
+echo "curl http://www.duckdns.org/update?domains=${HOST:?duckdns hostname}\&token=${TOKEN:?ducns toker}\&ip=" >>/etc/rc.d/rc.local
 bash /etc/rc.d/rc.local
-docker run --rm -p 80:80 -p 443:443 \
-    --name letsencrypt \
+docker run --rm -p 80:80 -p 443:443 --name letsencrypt \
     -v /etc/letsencrypt:/etc/letsencrypt \
     -e "LETSENCRYPT_EMAIL=${EMAIL:?email}" \
     -e "LETSENCRYPT_DOMAIN1=${HOST}.duckdns.org" \
