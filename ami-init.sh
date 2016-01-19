@@ -48,13 +48,13 @@ then
     blacklabelops/letsencrypt install
 fi
 # fallback to selfsigned if it did not work
-if ! test -e /etc/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem 
+if ! test -e /app/letsencrypt/live/${DDHOST}.duckdns.org/fullchain.pem 
 then 
-  mkdir -p /etc/letsencrypt/live/${HOST}.duckdns.org/
+  mkdir -p /app/letsencrypt/live/${HOST}.duckdns.org/
   printf "\\n\\n\\n\\n\\n\\n\\n" | \
   openssl req -x509 -newkey rsa:2048 \
--keyout  /etc/letsencrypt/live/${HOST}.duckdns.org/privkey.pem  \
--out /etc/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem -days 30000 -nodes
+-keyout  /app/letsencrypt/live/${HOST}.duckdns.org/privkey.pem  \
+-out /app/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem -days 30000 -nodes
 fi
   cat <<EOF >/etc/nginx/conf.d/butterfly.conf
 server {
