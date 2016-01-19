@@ -1,0 +1,39 @@
+hadoop:
+  hostname: hadoop
+  domainname: loc
+  container_name: hadoop
+  build: hadoop
+spark:
+  hostname: spark
+  domainname: loc
+  container_name: spark 
+  build: spark 
+  links: 
+    - hadoop:hadoop.loc
+zeppelin:
+  hostname: zeppelin
+  domainname: loc
+  container_name: zeppelin 
+  build: zeppelin
+  volumes:
+    - /app/Dropbox/zeppelin/notebook:/app/zeppelin/notebook
+  links:
+    - hadoop:hadoop.loc
+    - spark:spark.loc
+devenv:
+  hostname: devenv
+  domainname: loc
+  container_name: devenv
+  build: devenv
+  volumes:
+    - /app/Dropbox/home:/app/home
+  volumes_from: 
+    - zeppelin
+  links:
+    - hadoop:hadoop.loc
+    - spark:spark.loc
+    - zeppelin:zeppelin.loc
+  ports:
+    - 3000:3000 
+    - 6080:6080
+    - 5900:5900

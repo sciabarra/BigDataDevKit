@@ -20,3 +20,44 @@ NOTE!
  - specify your email (user for let's encrypt service)
  - before you  launch the instance add a rule to open the HTTPS ports to the world
  
+# Spark /  Hadoop / Zeppelin devkit
+
+Docker kit for Hadoop, Spark and Zeppelin 
+
+Devenv with IntelliJ, SBT and Ammonite accessible via web
+
+## Usage:
+
+First, get a docker machine and configure your docker to access it.
+Refer to docker documentation to learn how to do it.
+
+The script `sh build.sh <password>` builds the enviroment.
+
+Start it with `docker-compose up -d`.
+
+That is all.
+
+## What is in the kit
+
+Access the shell with http://youserver:3000 and the desktop with http://yourserver:6080
+
+In the kit there is Intellij free edition, a terminal with sbt and ammonite
+
+Inside the kit you have also Zeppelin, internally accessible as
+
+http://zeppelin.loc:8000, Hadoop accessible as hdfs://hadoop.loc:8020 and Spark on http://spark.loc
+
+(to fix)
+You can also ssh (without password) on  hadoop.loc, spark.loc and zeppelin.loc
+
+## Layout
+
+Apps are inside the containers:
+
+   /app/home
+   /app/hadoop
+   /app/spark
+   /app/zeppelin
+
+
+

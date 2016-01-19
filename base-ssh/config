@@ -1,0 +1,9 @@
+Host 0.0.0.0
+   StrictHostKeyChecking no
+   UserKnownHostsFile=/dev/null
+Host localhost
+   StrictHostKeyChecking no
+   UserKnownHostsFile=/dev/null
+Host *.loc
+   StrictHostKeyChecking no
+   UserKnownHostsFile=/dev/null
