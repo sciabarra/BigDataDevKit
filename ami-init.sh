@@ -8,7 +8,7 @@
 export PASSWD=${PASSWORD:?specify the password in PASSWORD envar}
 export DDTOKEN=${TOKEN:?duckdns token}
 export DDHOST=${HOST:?duckdns host}
-export LEEMAIL?${EMAIL:?letsencrypt email}
+export LEEMAIL=${EMAIL:?letsencrypt email}
 # end changes
 # set app directory
 mkdir /app 
