@@ -9,7 +9,7 @@ zeppelin:
   container_name: zeppelin 
   image: bddk/zeppelin
   volumes:
-    - /app/Dropbox/zeppelin/notebook:/app/zeppelin/notebook
+    - ${HOME}/Dropbox/zeppelin/notebook:/app/zeppelin/notebook
   links:
     - hadoop:hadoop.loc
 devenv:
@@ -18,7 +18,7 @@ devenv:
   container_name: devenv
   image: bddk/devenv
   volumes:
-    - /app/Dropbox/home:/app/home
+    - ${HOME}/Dropbox/IdeaProjects:/app/IdeaProjects
   volumes_from: 
     - zeppelin
   links:
