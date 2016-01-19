@@ -3,13 +3,6 @@ hadoop:
   domainname: loc
   container_name: hadoop
   image: bddk/hadoop
-sparkjobserver:
-  hostname: sparkjobserver
-  domainname: loc
-  container_name: sparkjobserver
-  image: bddk/sparkjobserver
-  links: 
-    - hadoop:hadoop.loc
 zeppelin:
   hostname: zeppelin
   domainname: loc
@@ -19,7 +12,6 @@ zeppelin:
     - /app/Dropbox/zeppelin/notebook:/app/zeppelin/notebook
   links:
     - hadoop:hadoop.loc
-    - sparkjobserver:sparkjobserver.loc
 devenv:
   hostname: devenv
   domainname: loc
@@ -31,9 +23,7 @@ devenv:
     - zeppelin
   links:
     - hadoop:hadoop.loc
-    - sparkjobserver:sparkjobserver.loc
     - zeppelin:zeppelin.loc
   ports:
-    - 3000:3000 
     - 6080:6080
     - 5900:5900

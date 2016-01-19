@@ -1,4 +1,4 @@
-FROM bddk/base-novnc
+FROM bddk/base-scala
 RUN apt-get -y install python-numpy
 USER app
 WORKDIR /app

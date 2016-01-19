@@ -9,6 +9,6 @@ cp base-ssh/id_* devenv
 for i in \
     base-java base-ssh base-hadoop hadoop \
     zeppelin sparkjobserver  \
-    base-scala devenv 
+    base-scala base-novnc devenv 
 do docker build -t bddk/$i $i || exit 1
 done

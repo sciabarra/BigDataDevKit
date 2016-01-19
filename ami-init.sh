@@ -5,10 +5,10 @@
 #HOST=duckdns host
 #EMAIL=your email here
 # change password here
-export PASSWD=${PASSWORD:?specify the password in PASSWORD envar}
-export DDTOKEN=${TOKEN:?duckdns token}
-export DDHOST=${HOST:?duckdns host}
-export LEEMAIL=${EMAIL:?letsencrypt email}
+PASSWD=${PASSWORD:?specify the password in PASSWORD envar}
+DDTOKEN=${TOKEN:?duckdns token}
+DDHOST=${HOST:?duckdns host}
+LEEMAIL=${EMAIL:?letsencrypt email}
 # end changes
 # set app directory
 mkdir /app 
@@ -24,9 +24,12 @@ echo "app:${PASSWD}" | chpasswd
 chown -Rvf app:app /app
 # install stuff
 yum -y update && yum -y install docker git nginx gcc make libffi-devel openssl-devel python-devel
+curl -L https://github.com/docker/compose/releases/download/1.5.2/docker-compose-`uname -s`-`uname -m` > /usr/bin/docker-compose
+chmod +x /usr/bin/docker-compose
 pip install butterfly
 /sbin/chkconfig nginx on
 /sbin/chkconfig docker on
+gpasswd -a app docker
 service docker start
 service nginx stop
 # prepare access

@@ -1,4 +1,5 @@
 FROM debian:jessie
+RUN sed -i -e 's/httpredir.debian.org/ftp.us.debian.org/' /etc/apt/sources.list 
 RUN groupadd -g 1000 app && useradd -g 1000 -u 1000 -d /app app -m -s /bin/bash ; chown -Rv app:app /app/
 RUN apt-get update && apt-get -y install git wget sudo jwm curl vim net-tools python make gcc g++ ssh iceweasel tightvncserver tmux
 RUN echo "app ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers ; sed -i 's/requiretty/!requiretty/' /etc/sudoers

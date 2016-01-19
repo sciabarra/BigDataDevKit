@@ -1,4 +1,5 @@
 FROM bddk/base-novnc
+USER app
 WORKDIR /app
 COPY _password /app/_password 
 COPY start-all.sh /app/bin/
