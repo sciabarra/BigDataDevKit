@@ -3,10 +3,12 @@
 #PASSWORD=app user password
 #TOKEN=duckdns token
 #HOST=duckdns host
+#EMAIL=your email here
 # change password here
 export PASSWD=${PASSWORD:?specify the password in PASSWORD envar}
 export DDTOKEN=${TOKEN:?duckdns token}
 export DDHOST=${HOST:?duckdns host}
+export LEEMAIL?${EMAIL:?letsencrypt email}
 # end changes
 # set app directory
 mkdir /app 
@@ -33,7 +35,7 @@ sed  -i -e 's/PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/ssh
 echo "curl http://www.duckdns.org/update?domains=${DDHOST}\&token=${DDTOKEN}\&ip=" >>/etc/rc.d/rc.local
 bash /etc/rc.d/rc.local
 # generate a certificate with letsencrypt
-if ! test -d /app/letsencrypt 
+if ! test -d /app/letsencrypt/live
 then 
   mkdir /app/letsencrypt
   chmod 0755 /app /app/letsencrypt
