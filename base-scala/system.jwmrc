@@ -5,7 +5,7 @@
    <!-- The root menu, if this is undefined you will not get a menu. -->
    <!-- Additional RootMenu attributes: onroot, labeled, label -->
    <RootMenu height="15" onroot="12">
-      <Program icon="terminal.png" label="Terminal">rxvt</Program>
+      <Program icon="terminal.png" label="Terminal">xterm -fn 10x20</Program>
       <Program icon="firefox.png" label="Firefox">iceweasel</Program>
       <Program icon="editor.png" label="Idea">idea</Program>
 

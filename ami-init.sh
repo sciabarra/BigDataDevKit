@@ -59,7 +59,7 @@ then
 -keyout  /app/letsencrypt/live/${HOST}.duckdns.org/privkey.pem  \
 -out /app/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem -days 30000 -nodes
 fi
-  cat <<EOF >/etc/nginx/conf.d/butterfly.conf
+  cat <<EOF >/etc/nginx/conf.d/proxies.conf
 server {
    listen       443;
    server_name  localhost;
@@ -71,8 +71,21 @@ server {
     ssl_protocols  SSLv2 SSLv3 TLSv1;
     ssl_ciphers  HIGH:!aNULL:!MD5;
     ssl_prefer_server_ciphers   on;
-   location ^~ / {
-    proxy_pass http://127.0.0.1:3000/;
+
+  location ~ ^/(vnc\.html|websockify.*|include/.*|images/.*)$ {
+    proxy_pass http://127.0.0.1:3000;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_read_timeout 43200000;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header Host \$http_host;
+    proxy_set_header X-NginX-Proxy true;
+  }
+
+  location ~ ^/(index\.html|static/.*|ws.*)?$  {
+    proxy_pass http://127.0.0.1:6080;
     proxy_http_version 1.1;
     proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection "upgrade";
