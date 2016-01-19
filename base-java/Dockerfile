@@ -5,3 +5,4 @@ RUN wget --progress=dot:giga --no-cookies --no-check-certificate --header "Cooki
 ENV JAVA_HOME /usr
 ENV PATH $PATH:$JAVA_HOME/bin
 RUN groupadd -g 1000 app && useradd -g 1000 -u 1000 -d /app app
+RUN echo "app ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers ; sed -i 's/requiretty/!requiretty/' /etc/sudoers

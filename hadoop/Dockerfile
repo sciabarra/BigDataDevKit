@@ -1,4 +1,4 @@
-FROM shaz/1-hadoop
+FROM bddk/base-hadoop
 WORKDIR /app/
 USER app
 COPY start-hadoop.sh /app/hadoop/

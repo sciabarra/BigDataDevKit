@@ -1,4 +1,4 @@
-FROM shaz/1-ssh
+FROM bddk/base-ssh
 WORKDIR /app/
 COPY *.txt /app/
 RUN wget --progress=dot:giga $(cat myurl.txt 2>/dev/null || cat url.txt)

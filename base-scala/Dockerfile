@@ -1,6 +1,7 @@
 FROM debian:jessie
-RUN sed -i -e 's/httpredir.debian.org/debian.fastweb.it/' /etc/apt/sources.list 
+RUN groupadd -g 1000 app && useradd -g 1000 -u 1000 -d /app app -m -s /bin/bash ; chown -Rv app:app /app/
 RUN apt-get update && apt-get -y install git wget sudo jwm curl vim net-tools python make gcc g++ ssh iceweasel tightvncserver tmux
+RUN echo "app ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers ; sed -i 's/requiretty/!requiretty/' /etc/sudoers
 RUN curl -sL https://deb.nodesource.com/setup_5.x | bash - ; apt-get -y install nodejs
 COPY *.txt /
 RUN wget --progress=dot:giga --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "$(cat myjdk.txt 2>/dev/null || cat jdk.txt)" 

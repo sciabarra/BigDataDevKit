@@ -1,4 +1,4 @@
-FROM shaz/1-wettynovnc
+FROM bddk/base-novnc
 WORKDIR /app
 COPY _password /app/_password 
 COPY start-all.sh /app/bin/
@@ -15,6 +15,6 @@ COPY predef.scala .ammonite/
 ENV ENV=/app/.shinit
 RUN echo 'bash' >.shinit ; echo 'source /etc/profile' >.bashrc ; mkdir .ssh
 COPY id_* .ssh/
-EXPOSE 6080 3000 5900
+EXPOSE 6080 5900
 VOLUME /app/home
 CMD bash /app/bin/start-all.sh

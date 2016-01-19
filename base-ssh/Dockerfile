@@ -1,11 +1,10 @@
-FROM shaz/1-java
+FROM bddk/base-java
 COPY config id_rsa id_rsa.pub /root/.ssh/ 
 RUN cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys ;\
  cp -Rvf /root/.ssh /app/.ssh ;\
  chmod 0600 /root/.ssh/* /app/.ssh/* ;\
  mkdir /app/data ;\
  chown app -Rvf /app  
-RUN echo "app ALL=(ALL)	NOPASSWD: ALL" >>/etc/sudoers ; sed -i 's/requiretty/!requiretty/' /etc/sudoers
 RUN /etc/init.d/sshd start ; /etc/init.d/sshd stop
 WORKDIR /app
 USER app

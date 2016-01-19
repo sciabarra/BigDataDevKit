@@ -1,1 +1,0 @@
-http://www.us.apache.org/dist/spark/spark-1.5.2/spark-1.5.2-bin-without-hadoop.tgz

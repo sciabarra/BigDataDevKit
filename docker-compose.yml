@@ -2,36 +2,36 @@ hadoop:
   hostname: hadoop
   domainname: loc
   container_name: hadoop
-  build: hadoop
-spark:
-  hostname: spark
+  image: bddk/hadoop
+sparkjobserver:
+  hostname: sparkjobserver
   domainname: loc
-  container_name: spark 
-  build: spark 
+  container_name: sparkjobserver
+  image: bddk/sparkjobserver
   links: 
     - hadoop:hadoop.loc
 zeppelin:
   hostname: zeppelin
   domainname: loc
   container_name: zeppelin 
-  build: zeppelin
+  image: bddk/zeppelin
   volumes:
     - /app/Dropbox/zeppelin/notebook:/app/zeppelin/notebook
   links:
     - hadoop:hadoop.loc
-    - spark:spark.loc
+    - sparkjobserver:sparkjobserver.loc
 devenv:
   hostname: devenv
   domainname: loc
   container_name: devenv
-  build: devenv
+  image: bddk/devenv
   volumes:
     - /app/Dropbox/home:/app/home
   volumes_from: 
     - zeppelin
   links:
     - hadoop:hadoop.loc
-    - spark:spark.loc
+    - sparkjobserver:sparkjobserver.loc
     - zeppelin:zeppelin.loc
   ports:
     - 3000:3000 
