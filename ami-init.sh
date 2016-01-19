@@ -1,20 +1,30 @@
 #!/bin/bash
 # change password here
 echo "ec2-user:${PASSWORD:-changeMeRightNow}" | chpasswd
-yum -y update && yum -y install docker git nginx
+yum -y update && yum -y install docker git nginx gcc make libffi-devel openssl-devel python-devel
+pip install butterfly
 /sbin/chkconfig nginx on
 /sbin/chkconfig docker on
 service docker start
 service nginx stop
 sed  -i -e 's/PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 # assign duckdns hostname
-echo "curl http://www.duckdns.org/update?domains=${HOST:?duckdns hostname}\&token=${TOKEN:?ducns toker}\&ip=" >>/etc/rc.d/rc.local
+echo "curl http://www.duckdns.org/update?domains=${HOST:?duckdns hostname}\&token=${TOKEN:?duckdns token}\&ip=" >>/etc/rc.d/rc.local
 bash /etc/rc.d/rc.local
+# generate a certificate with letsencrypt
 docker run --rm -p 80:80 -p 443:443 --name letsencrypt \
     -v /etc/letsencrypt:/etc/letsencrypt \
     -e "LETSENCRYPT_EMAIL=${EMAIL:?email}" \
     -e "LETSENCRYPT_DOMAIN1=${HOST}.duckdns.org" \
     blacklabelops/letsencrypt install
+# fallback to selfsigned if it did not work
+if ! test -e /etc/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem 
+then mkdir -p /etc/letsencrypt/live/${HOST}.duckdns.org/
+printf "\\n\\n\\n\\n\\n\\n\\n" | \
+openssl req -x509 -newkey rsa:2048 \
+-keyout  /etc/letsencrypt/live/${HOST}.duckdns.org/privkey.pem  \
+-out /etc/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem -days 30000 -nodes
+fi
 cat <<EOF >/etc/nginx/conf.d/wetty.conf
 server {
    listen       443;
@@ -40,10 +50,7 @@ server {
   }
 }
 EOF
-docker pull nathanleclaire/wetty
-docker run --name term -p "3000:3000" -u term -d \
---restart=always nathanleclaire/wetty app.js --port 3000 \
---sshhost $(hostname -I | awk '{ print $1}') \
---sshuser ec2-user
+echo "/usr/local/bin/butterfly.server.py --unsecure --host=localhost --port=3000 &" >>/etc/rc.d/rc.local
 service nginx start
 service sshd restart
+bash /etc/rc.d/rc.local
