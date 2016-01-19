@@ -15,8 +15,10 @@ sed  -i -e 's/PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/ssh
 echo "curl http://www.duckdns.org/update?domains=${HOST:?duckdns hostname}\&token=${TOKEN:?duckdns token}\&ip=" >>/etc/rc.d/rc.local
 bash /etc/rc.d/rc.local
 # generate a certificate with letsencrypt
+mkdir /app/letsencrypt
+chmod 0755 /app /app/letsencrypt
 docker run --rm -p 80:80 -p 443:443 --name letsencrypt \
-    -v /etc/letsencrypt:/etc/letsencrypt \
+    -v /app/letsencrypt:/etc/letsencrypt \
     -e "LETSENCRYPT_EMAIL=${EMAIL:?email}" \
     -e "LETSENCRYPT_DOMAIN1=${HOST}.duckdns.org" \
     blacklabelops/letsencrypt install
@@ -28,14 +30,14 @@ openssl req -x509 -newkey rsa:2048 \
 -keyout  /etc/letsencrypt/live/${HOST}.duckdns.org/privkey.pem  \
 -out /etc/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem -days 30000 -nodes
 fi
-cat <<EOF >/etc/nginx/conf.d/wetty.conf
+cat <<EOF >/etc/nginx/conf.d/butterfly.conf
 server {
    listen       443;
    server_name  localhost;
    root         html;
     ssl         on;
-    ssl_certificate      /etc/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem;
-    ssl_certificate_key  /etc/letsencrypt/live/${HOST}.duckdns.org/privkey.pem;
+    ssl_certificate      /app/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem;
+    ssl_certificate_key  /app/letsencrypt/live/${HOST}.duckdns.org/privkey.pem;
     ssl_session_timeout  5m;
     ssl_protocols  SSLv2 SSLv3 TLSv1;
     ssl_ciphers  HIGH:!aNULL:!MD5;
@@ -53,7 +55,7 @@ server {
   }
 }
 EOF
-echo "/usr/local/bin/butterfly.server.py --unsecure --host=localhost --port=3000 &" >>/etc/rc.d/rc.local
+echo "/usr/local/bin/butterfly.server.py --unsecure --host=127.0.0.1 --port=3000 &" >>/etc/rc.d/rc.local
 service nginx start
 service sshd restart
 bash /etc/rc.d/rc.local
