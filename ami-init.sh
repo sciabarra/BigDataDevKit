@@ -1,36 +1,60 @@
 #!/bin/bash
-PASSWD=${PASSWORD:?specify the password in PASSWORD envar}
+#uncomment and set values
+#PASSWORD=app user password
+#TOKEN=duckdns token
+#HOST=duckdns host
 # change password here
-groupadd -g 1000 app && useradd -g 1000 -u 1000 -d /app app
+export PASSWD=${PASSWORD:?specify the password in PASSWORD envar}
+export DDTOKEN=${TOKEN:?duckdns token}
+export DDHOST=${HOST:?duckdns host}
+# end changes
+# set app directory
+mkdir /app 
+if test -b /dev/sdb &&  file -sL /dev/sdb | grep "/dev/sdb: data"
+then mkfs.ext4 /dev/sdb
+fi
+echo "/dev/sdb /app ext4 defaults 0 0" >>/etc/fstab
+mount -a
+groupadd -g 1000 app 
+useradd -g 1000 -u 1000 -d /app/home app
 echo "app ALL=(ALL)	NOPASSWD: ALL" >>/etc/sudoers
 echo "app:${PASSWD}" | chpasswd
+chown -Rvf app:app /app
+# install stuff
 yum -y update && yum -y install docker git nginx gcc make libffi-devel openssl-devel python-devel
 pip install butterfly
 /sbin/chkconfig nginx on
 /sbin/chkconfig docker on
 service docker start
 service nginx stop
+# prepare access
 sed  -i -e 's/PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 # assign duckdns hostname
-echo "curl http://www.duckdns.org/update?domains=${HOST:?duckdns hostname}\&token=${TOKEN:?duckdns token}\&ip=" >>/etc/rc.d/rc.local
+echo "curl http://www.duckdns.org/update?domains=${DDHOST}\&token=${DDTOKEN}\&ip=" >>/etc/rc.d/rc.local
 bash /etc/rc.d/rc.local
 # generate a certificate with letsencrypt
-mkdir /app/letsencrypt
-chmod 0755 /app /app/letsencrypt
-docker run --rm -p 80:80 -p 443:443 --name letsencrypt \
+if ! test -d /app/letsencrypt 
+then 
+  mkdir /app/letsencrypt
+  chmod 0755 /app /app/letsencrypt
+  docker run --rm \
+    -p 80:80 -p 443:443 \
+    --name letsencrypt \
     -v /app/letsencrypt:/etc/letsencrypt \
-    -e "LETSENCRYPT_EMAIL=${EMAIL:?email}" \
-    -e "LETSENCRYPT_DOMAIN1=${HOST}.duckdns.org" \
+    -e "LETSENCRYPT_EMAIL=${LEEMAIL:?email}" \
+    -e "LETSENCRYPT_DOMAIN1=${DDHOST}.duckdns.org" \
     blacklabelops/letsencrypt install
+fi
 # fallback to selfsigned if it did not work
 if ! test -e /etc/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem 
-then mkdir -p /etc/letsencrypt/live/${HOST}.duckdns.org/
-printf "\\n\\n\\n\\n\\n\\n\\n" | \
-openssl req -x509 -newkey rsa:2048 \
+then 
+  mkdir -p /etc/letsencrypt/live/${HOST}.duckdns.org/
+  printf "\\n\\n\\n\\n\\n\\n\\n" | \
+  openssl req -x509 -newkey rsa:2048 \
 -keyout  /etc/letsencrypt/live/${HOST}.duckdns.org/privkey.pem  \
 -out /etc/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem -days 30000 -nodes
 fi
-cat <<EOF >/etc/nginx/conf.d/butterfly.conf
+  cat <<EOF >/etc/nginx/conf.d/butterfly.conf
 server {
    listen       443;
    server_name  localhost;
