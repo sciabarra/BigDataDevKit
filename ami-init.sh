@@ -1,6 +1,9 @@
 #!/bin/bash
+PASSWD=${PASSWORD:?specify the password in PASSWORD envar}
 # change password here
-echo "ec2-user:${PASSWORD:-changeMeRightNow}" | chpasswd
+groupadd -g 1000 app && useradd -g 1000 -u 1000 -d /app app
+echo "app ALL=(ALL)	NOPASSWD: ALL" >>/etc/sudoers
+echo "app:${PASSWD}" | chpasswd
 yum -y update && yum -y install docker git nginx gcc make libffi-devel openssl-devel python-devel
 pip install butterfly
 /sbin/chkconfig nginx on
