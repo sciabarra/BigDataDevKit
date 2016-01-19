@@ -12,6 +12,18 @@ zeppelin:
     - ${HOME}/Dropbox/zeppelin/notebook:/app/zeppelin/notebook
   links:
     - hadoop:hadoop.loc
+  ports:
+    - "8080:8080"
+sparkjobserver:
+  hostname: sparkjobserver
+  domainname: loc
+  container_name: sparkjobserver
+  image: bddk/sparkjobserver
+  links:
+    - hadoop:hadoop.loc
+  ports:
+    - "8090:8090"
+  command: "--executor-memory 256m"
 devenv:
   hostname: devenv
   domainname: loc
@@ -24,6 +36,7 @@ devenv:
   links:
     - hadoop:hadoop.loc
     - zeppelin:zeppelin.loc
+    - sparkjobserver:sparkjobserver.loc 
   ports:
-    - 6080:6080
-    - 5900:5900
+    - "6080:6080"
+    - "5900:5900"
