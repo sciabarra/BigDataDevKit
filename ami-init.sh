@@ -73,7 +73,7 @@ server {
     ssl_prefer_server_ciphers   on;
 
   location ~ ^/(vnc\.html|websockify.*|include/.*|images/.*)$ {
-    proxy_pass http://127.0.0.1:3000;
+    proxy_pass http://127.0.0.1:6080;
     proxy_http_version 1.1;
     proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection "upgrade";
@@ -85,7 +85,7 @@ server {
   }
 
   location ~ ^/(index\.html|static/.*|ws.*)?$  {
-    proxy_pass http://127.0.0.1:6080;
+    proxy_pass http://127.0.0.1:3000;
     proxy_http_version 1.1;
     proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection "upgrade";

@@ -1,6 +1,6 @@
 #!/bin/bash
-if "$USER" != "app"
-then echo "Please run this as app user"
+if ! test $(id -u)  == "1000"
+then echo "Please run this script as 'app' user" ; exit 1
 fi
 if ! test -e devenv/_password 
 then echo "Please type password for devenv"
