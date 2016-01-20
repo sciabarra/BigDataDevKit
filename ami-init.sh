@@ -23,7 +23,7 @@ echo "app ALL=(ALL)	NOPASSWD: ALL" >>/etc/sudoers
 echo "app:${PASSWD}" | chpasswd
 chown -Rvf app:app /app
 # install stuff
-yum -y update && yum -y install docker git nginx gcc make libffi-devel openssl-devel python-devel
+yum -y update && yum -y install docker tmux git nginx gcc make libffi-devel openssl-devel python-devel
 curl -L https://github.com/docker/compose/releases/download/1.5.2/docker-compose-`uname -s`-`uname -m` > /usr/bin/docker-compose
 chmod +x /usr/bin/docker-compose
 pip install butterfly
@@ -32,32 +32,36 @@ pip install butterfly
 gpasswd -a app docker
 service docker start
 service nginx stop
-# prepare access
+# prepare ssh access
 sed  -i -e 's/PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 # assign duckdns hostname
 echo "curl http://www.duckdns.org/update?domains=${DDHOST}\&token=${DDTOKEN}\&ip=" >>/etc/rc.d/rc.local
 bash /etc/rc.d/rc.local
+# restore a backup of letsencrypt if provided
+if test -n "$LETGZ"
+then wget -O- "$LETGZ" | tar xzf - -C / 
+fi
 # generate a certificate with letsencrypt
-if ! test -d /app/letsencrypt/live
-then 
-  mkdir /app/letsencrypt
-  chmod 0755 /app /app/letsencrypt
+if ! test -d /app/home/Dropbox/letsencrypt/live
+then
+  mkdir -p /app/home/Dropbox/letsencrypt
+  chmod 0755 /app /app/home /app/home/Dropbox /app/home/Dropbox/letsencrypt
   docker run --rm \
     -p 80:80 -p 443:443 \
     --name letsencrypt \
-    -v /app/letsencrypt:/etc/letsencrypt \
+    -v /app/home/Dropbox/letsencrypt:/etc/letsencrypt \
     -e "LETSENCRYPT_EMAIL=${LEEMAIL:?email}" \
     -e "LETSENCRYPT_DOMAIN1=${DDHOST}.duckdns.org" \
     blacklabelops/letsencrypt install
+  tar czvf /app/home/Dropbox/letsencrypt.tgz /app/home/Dropbox/letsencrypt
 fi
 # fallback to selfsigned if it did not work
-if ! test -e /app/letsencrypt/live/${DDHOST}.duckdns.org/fullchain.pem 
+if ! test -e /app/home/Dropbox/letsencrypt/live/${DDHOST}.duckdns.org/fullchain.pem 
 then 
-  mkdir -p /app/letsencrypt/live/${HOST}.duckdns.org/
-  printf "\\n\\n\\n\\n\\n\\n\\n" | \
+  mkdir -p /app/home/Dropbox/letsencrypt/live/${HOST}.duckdns.org/
   openssl req -x509 -newkey rsa:2048 \
--keyout  /app/letsencrypt/live/${HOST}.duckdns.org/privkey.pem  \
--out /app/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem -days 30000 -nodes
+-keyout  /app/home/Dropbox/letsencrypt/live/${HOST}.duckdns.org/privkey.pem  \
+-out /app/home/Dropbox/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem -days 30000 -nodes
 fi
   cat <<EOF >/etc/nginx/conf.d/proxies.conf
 server {
@@ -65,8 +69,8 @@ server {
    server_name  localhost;
    root         html;
     ssl         on;
-    ssl_certificate      /app/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem;
-    ssl_certificate_key  /app/letsencrypt/live/${HOST}.duckdns.org/privkey.pem;
+    ssl_certificate      /app/home/Dropbox/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem;
+    ssl_certificate_key  /app/home/Dropbox/letsencrypt/live/${HOST}.duckdns.org/privkey.pem;
     ssl_session_timeout  5m;
     ssl_protocols  SSLv2 SSLv3 TLSv1;
     ssl_ciphers  HIGH:!aNULL:!MD5;
@@ -101,3 +105,7 @@ echo "/usr/local/bin/butterfly.server.py --unsecure --host=127.0.0.1 --port=3000
 service nginx start
 service sshd restart
 bash /etc/rc.d/rc.local
+if ! test -d /app/BigDataDevKit
+then cd /app ; git clone https://github.com/sciabarra/BigDataDevKit 
+fi
+chown -Rvf app:app /app

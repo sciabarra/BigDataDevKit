@@ -1,7 +1,6 @@
 # BigDataDevKit
 
-Big Data Development Kit (Hadoop / Spark / Zeppelin / IntelliJ)
-
+Big Data Development Kit (Hadoop / Spark / Zeppelin / IntelliJ) in Amazon AWS
 
 Usage:
 
@@ -13,12 +12,16 @@ Specify in the initialization of the vm
 #!/bin/bash
 wget -O- http://bit.ly/1PjnNB3 | PASSWORD="changeme" TOKEN="duck-dns-token" HOST="duckdnshost" EMAIL="your@email"  bash
 ```
-
 NOTE!
- - change the password (change the string within the quotes with your password) to the one you want
- - register an hostname in www.duckdns.org and get the token, and replace them in the TOKEN and HOST variables
- - specify your email (user for let's encrypt service)
- - before you  launch the instance add a rule to open the HTTPS ports to the world
+- You need to specify Amazon Linux 64 bit 
+- You need at least an image small (2g) better 4g for running all the services
+- You need at least 20 GB space
+- Create a secondary block on sdb and the /app folder with all your data will be mounted there, thus preserved from termination
+- change the password (change the string within the quotes with your password) to the one you want
+- register an hostname in www.duckdns.org and get the token, and replace them in the TOKEN and HOST variables
+- specify your email (user for let's encrypt service)
+- if you have a backup of let's encrypt (for example in Dropbox) specify LETGZ="...." to the url of your backup
+- before you  launch the instance add a rule to open the HTTPS ports to the world
  
 # Spark /  Hadoop / Zeppelin devkit
 

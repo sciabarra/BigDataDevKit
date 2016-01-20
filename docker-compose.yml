@@ -3,6 +3,8 @@ hadoop:
   domainname: loc
   container_name: hadoop
   image: bddk/hadoop
+  ports:
+     - "8020" 
 zeppelin:
   hostname: zeppelin
   domainname: loc
@@ -13,7 +15,7 @@ zeppelin:
   links:
     - hadoop:hadoop.loc
   ports:
-    - "8080:8080"
+    - "8080"
 sparkjobserver:
   hostname: sparkjobserver
   domainname: loc
@@ -30,7 +32,8 @@ devenv:
   container_name: devenv
   image: bddk/devenv
   volumes:
-    - ${HOME}/Dropbox/IdeaProjects:/app/IdeaProjects
+    - "${HOME}/Dropbox/idea/IdeaProjects:/app/IdeaProjects"
+    - "${HOME}/Dropbox/idea/.IdeaIC15:/app/.IdeaIC15"
   volumes_from: 
     - zeppelin
   links:

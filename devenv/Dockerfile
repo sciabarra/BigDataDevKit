@@ -3,7 +3,7 @@ USER app
 WORKDIR /app
 COPY _password /app/_password 
 COPY start-all.sh /app/bin/
-RUN mkdir /app/data ;\
+RUN mkdir /app/IdeaProjects /app/.IdeaIC15 ;\
     echo "app:$(cat /app/_password)" | sudo chpasswd ;\
     mkdir .vnc ;\
     printf "$(cat /app/_password)"'\n'"$(cat /app/_password)"'\nn\n' | vncpasswd -f  >.vnc/passwd ;\
