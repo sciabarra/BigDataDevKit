@@ -9,7 +9,6 @@ then echo "Please type password for devenv"
 fi
 test -e base-ssh/id_rsa ||  ssh-keygen -t rsa -f base-ssh/id_rsa -N '' 
 cp base-ssh/id_* devenv
-mkdir -p $HOME/Dropbox/idea/IdeaProjects $HOME/Dropbox/idea/.IdeaIC15 $HOME/Dropbox/zeppelin/notebook
 for i in \
     base-java base-ssh base-hadoop hadoop \
     zeppelin sparkjobserver  \

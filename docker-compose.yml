@@ -10,8 +10,6 @@ zeppelin:
   domainname: loc
   container_name: zeppelin 
   image: bddk/zeppelin
-  volumes:
-    - ${HOME}/Dropbox/zeppelin/notebook:/app/zeppelin/notebook
   links:
     - hadoop:hadoop.loc
   ports:
@@ -31,11 +29,6 @@ devenv:
   domainname: loc
   container_name: devenv
   image: bddk/devenv
-  volumes:
-    - "${HOME}/Dropbox/idea/IdeaProjects:/app/IdeaProjects"
-    - "${HOME}/Dropbox/idea/.IdeaIC15:/app/.IdeaIC15"
-  volumes_from: 
-    - zeppelin
   links:
     - hadoop:hadoop.loc
     - zeppelin:zeppelin.loc

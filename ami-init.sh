@@ -53,7 +53,6 @@ then
     -e "LETSENCRYPT_EMAIL=${LEEMAIL:?email}" \
     -e "LETSENCRYPT_DOMAIN1=${DDHOST}.duckdns.org" \
     blacklabelops/letsencrypt install
-  tar czvf /app/home/Dropbox/letsencrypt.tgz /app/home/Dropbox/letsencrypt
 fi
 # fallback to selfsigned if it did not work
 if ! test -e /app/home/Dropbox/letsencrypt/live/${DDHOST}.duckdns.org/fullchain.pem 
@@ -63,6 +62,7 @@ then
 -keyout  /app/home/Dropbox/letsencrypt/live/${HOST}.duckdns.org/privkey.pem  \
 -out /app/home/Dropbox/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem -days 30000 -nodes
 fi
+# nginx configuration
   cat <<EOF >/etc/nginx/conf.d/proxies.conf
 server {
    listen       443;
