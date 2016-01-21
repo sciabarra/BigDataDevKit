@@ -52,10 +52,12 @@ then
   docker run --rm \
     -p 80:80 -p 443:443 \
     --name letsencrypt \
-    -v /app/letsencrypt:/etc/letsencrypt \
+    -v "/app/letsencrypt:/etc/letsencrypt" \
+    -v "/var/lib/letsencrypt:/var/lib/letsencrypt" \
     -e "LETSENCRYPT_EMAIL=${LEEMAIL:?email}" \
     -e "LETSENCRYPT_DOMAIN1=${DDHOST}.duckdns.org" \
-    blacklabelops/letsencrypt install
+    quay.io/letsencrypt/letsencrypt:non-interactive auth \
+     --email ${LEEMAIL:?email} -d ${DDHOST}.duckdns.org --agree-tos
 fi
 # fallback to selfsigned if it did not work
 if ! test -e /app/letsencrypt/live/${DDHOST}.duckdns.org/fullchain.pem 
