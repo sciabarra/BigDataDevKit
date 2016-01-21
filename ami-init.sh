@@ -105,7 +105,4 @@ echo "/usr/local/bin/butterfly.server.py --unsecure --host=127.0.0.1 --port=3000
 service nginx start
 service sshd restart
 bash /etc/rc.d/rc.local
-if ! test -d /app/BigDataDevKit
-then cd /app ; git clone https://github.com/sciabarra/BigDataDevKit 
-fi
 chown -Rvf app:app /app
