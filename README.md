@@ -10,7 +10,12 @@ Specify in the initialization of the vm
 
 ```
 #!/bin/bash
-wget -O- http://bit.ly/1PjnNB3 | PASSWORD="changeme" TOKEN="duck-dns-token" HOST="duckdnshost" EMAIL="your@email"  bash
+wget -O- http://bit.ly/1PjnNB3 |\
+ PASSWORD="changeme"\
+ TOKEN="duck-dns-token"\
+ HOST="duckdnshost"\
+ EMAIL="your@email"\
+ bash
 ```
 NOTE!
 - You need to specify Amazon Linux 64 bit 
