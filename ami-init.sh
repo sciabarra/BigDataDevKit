@@ -12,13 +12,16 @@ LEEMAIL=${EMAIL:?letsencrypt email}
 # end changes
 # set app directory
 mkdir /app 
-if test -b /dev/sdb &&  file -sL /dev/sdb | grep "/dev/sdb: data"
-then mkfs.ext4 /dev/sdb
+if test -b /dev/sdb 
+then if  file -sL /dev/sdb | grep "/dev/sdb: data"
+     then mkfs.ext4 /dev/sdb
+     fi
+     echo "/dev/sdb /app ext4 defaults 0 0" >>/etc/fstab
+     mount -a
 fi
-echo "/dev/sdb /app ext4 defaults 0 0" >>/etc/fstab
-mount -a
 groupadd -g 1000 app 
-useradd -g 1000 -u 1000 -d /app/home app
+useradd -g 1000 -u 1000 -d /app app
+cp /etc/skel/.* /app
 echo "app ALL=(ALL)	NOPASSWD: ALL" >>/etc/sudoers
 echo "app:${PASSWD}" | chpasswd
 chown -Rvf app:app /app
@@ -42,25 +45,25 @@ if test -n "$LETGZ"
 then wget -O- "$LETGZ" | tar xzf - -C / 
 fi
 # generate a certificate with letsencrypt
-if ! test -d /app/home/Dropbox/letsencrypt/live
+if ! test -d /app/letsencrypt/live
 then
-  mkdir -p /app/home/Dropbox/letsencrypt
-  chmod 0755 /app /app/home /app/home/Dropbox /app/home/Dropbox/letsencrypt
+  mkdir -p /app/letsencrypt
+  chmod 0755 /app /app/letsencrypt
   docker run --rm \
     -p 80:80 -p 443:443 \
     --name letsencrypt \
-    -v /app/home/Dropbox/letsencrypt:/etc/letsencrypt \
+    -v /app/letsencrypt:/etc/letsencrypt \
     -e "LETSENCRYPT_EMAIL=${LEEMAIL:?email}" \
     -e "LETSENCRYPT_DOMAIN1=${DDHOST}.duckdns.org" \
     blacklabelops/letsencrypt install
 fi
 # fallback to selfsigned if it did not work
-if ! test -e /app/home/Dropbox/letsencrypt/live/${DDHOST}.duckdns.org/fullchain.pem 
+if ! test -e /app/letsencrypt/live/${DDHOST}.duckdns.org/fullchain.pem 
 then 
-  mkdir -p /app/home/Dropbox/letsencrypt/live/${HOST}.duckdns.org/
+  mkdir -p /app/letsencrypt/live/${HOST}.duckdns.org/
   openssl req -x509 -newkey rsa:2048 \
--keyout  /app/home/Dropbox/letsencrypt/live/${HOST}.duckdns.org/privkey.pem  \
--out /app/home/Dropbox/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem -days 30000 -nodes
+-keyout  /app/letsencrypt/live/${HOST}.duckdns.org/privkey.pem  \
+-out /app/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem -days 30000 -nodes
 fi
 # nginx configuration
   cat <<EOF >/etc/nginx/conf.d/proxies.conf
@@ -69,8 +72,8 @@ server {
    server_name  localhost;
    root         html;
     ssl         on;
-    ssl_certificate      /app/home/Dropbox/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem;
-    ssl_certificate_key  /app/home/Dropbox/letsencrypt/live/${HOST}.duckdns.org/privkey.pem;
+    ssl_certificate      /app/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem;
+    ssl_certificate_key  /app/letsencrypt/live/${HOST}.duckdns.org/privkey.pem;
     ssl_session_timeout  5m;
     ssl_protocols  SSLv2 SSLv3 TLSv1;
     ssl_ciphers  HIGH:!aNULL:!MD5;

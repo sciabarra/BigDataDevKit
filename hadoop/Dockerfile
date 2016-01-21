@@ -1,6 +1,7 @@
 FROM bddk/base-hadoop
 WORKDIR /app/
 USER app
+VOLUME /app/Dropbox
 COPY start-hadoop.sh /app/hadoop/
 RUN echo "export JAVA_HOME=/usr" >>/app/hadoop/etc/hadoop/hadoop-env.sh  
 COPY *.xml /app/hadoop/etc/hadoop/
