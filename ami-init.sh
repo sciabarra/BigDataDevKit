@@ -60,13 +60,16 @@ fi
 # fallback to selfsigned if it did not work
 if ! test -e /app/letsencrypt/live/${DDHOST}.duckdns.org/fullchain.pem 
 then 
-  mkdir -p /app/letsencrypt/live/${HOST}.duckdns.org/
+  mkdir -p /app/letsencrypt/live/${HOST}.duckdns.org
+  printf "\\n\\n\\n\\n\\n\\n\\n" |\
   openssl req -x509 -newkey rsa:2048 \
--keyout  /app/letsencrypt/live/${HOST}.duckdns.org/privkey.pem  \
--out /app/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem -days 30000 -nodes
+  -keyout  /app/letsencrypt/live/${HOST}.duckdns.org/privkey.pem \
+  -out /app/letsencrypt/live/${HOST}.duckdns.org/fullchain.pem \
+  -days 30000 -nodes
 fi
+chown -Rvf app:app /app
 # nginx configuration
-  cat <<EOF >/etc/nginx/conf.d/proxies.conf
+cat <<EOF >/etc/nginx/conf.d/proxies.conf
 server {
    listen       443;
    server_name  localhost;
@@ -108,4 +111,3 @@ echo "/usr/local/bin/butterfly.server.py --unsecure --host=127.0.0.1 --port=3000
 service nginx start
 service sshd restart
 bash /etc/rc.d/rc.local
-chown -Rvf app:app /app
