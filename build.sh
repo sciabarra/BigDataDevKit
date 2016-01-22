@@ -24,7 +24,7 @@ then sudo wget --no-check-certificate -O/usr/bin/dropbox https://www.dropbox.com
 fi
 if ! grep docker-compose /etc/rc.d/rc.local >/dev/null
 then echo "Build complete. You can start with 'docker-compose up' or reboot to start automatically"
-     sudo cp $PWD/docker-compose.yml /etc/docker-compose.yml
+     sudo cp "$(dirname $0)/docker-compose.yml" /etc/docker-compose.yml
      echo "/usr/bin/docker-compose -f /etc/docker-compose.yml up -d" | sudo tee -a /etc/rc.d/rc.local >/dev/null
 fi
 
