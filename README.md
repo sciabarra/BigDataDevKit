@@ -58,14 +58,6 @@ http://zeppelin.loc:8000, Hadoop accessible as hdfs://hadoop.loc:8020 and Spark 
 (to fix)
 You can also ssh (without password) on  hadoop.loc, spark.loc and zeppelin.loc
 
-## Layout
-
-Apps are inside the containers:
-
-   /app/home
-   /app/hadoop
-   /app/spark
-   /app/zeppelin
 
 
 
