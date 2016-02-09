@@ -4,7 +4,7 @@ hadoop:
   container_name: hadoop
   image: bddk/hadoop
   ports:
-     - "8020" 
+     - "8020:8020" 
   volumes:
      - "/app/Dropbox:/app/Dropbox"
 zeppelin:
@@ -15,9 +15,9 @@ zeppelin:
   links:
     - hadoop:hadoop.loc
   ports:
-    - "8080"
+    - "8080:8080"
   volumes:
-    - "/app/Dropbox:/app/Dropbox"
+    - "/app/zeppelin/notebook:/app/zeppelin/notebook"
 sparkjobserver:
   hostname: sparkjobserver
   domainname: loc
@@ -27,8 +27,6 @@ sparkjobserver:
     - hadoop:hadoop.loc
   ports:
     - "8090:8090"
-  volumes:
-    - "/app/Dropbox:/app/Dropbox"
   command: "--executor-memory 256m"
 devenv:
   hostname: devenv
@@ -43,4 +41,5 @@ devenv:
     - "6080:6080"
     - "5900:5900"
   volumes:
-    - "/app/Dropbox:/app/Dropbox"
+    - "/app/IdeaProjects:/app/IdeaProjects"
+    - "/app/.IntelliJIdea5:/app/.IntelliJIdea15"

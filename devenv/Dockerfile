@@ -4,7 +4,7 @@ WORKDIR /app
 COPY _password /app/_password 
 COPY start-all.sh /app/bin/
 RUN echo "app:$(cat /app/_password)" | sudo chpasswd ;\
-    mkdir .vnc ;\
+    mkdir .vnc .IntelliJIdea15 IdeaProjects ;\
     printf "$(cat /app/_password)"'\n'"$(cat /app/_password)"'\nn\n' | vncpasswd -f  >.vnc/passwd ;\
     chmod 0600 .vnc/passwd ;\
     rm /app/_password ;\
@@ -13,5 +13,6 @@ RUN echo "app:$(cat /app/_password)" | sudo chpasswd ;\
 COPY predef.scala .ammonite/
 COPY id_* .ssh/
 EXPOSE 6080 5900
-VOLUME /app/Dropbox
+VOLUME /app/.IntelliJIdea15
+VOLUME /app/IdeaProjects
 CMD bash /app/bin/start-all.sh

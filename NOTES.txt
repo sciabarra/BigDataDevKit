@@ -1,0 +1,4 @@
+- Chromium is broken - removed
+- Idea does not start from JVM - it does from commandline - removed from menu
+- Updated idea to the Ultimate version
+- Volumized notebook and Idea folders
